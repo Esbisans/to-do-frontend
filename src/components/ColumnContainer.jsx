@@ -1,42 +1,31 @@
-import {SortableContext, arrayMove, useSortable} from '@dnd-kit/sortable';
-import { AnimatePresence } from 'framer-motion';
+import {SortableContext, useSortable} from '@dnd-kit/sortable';
 import { TaskItem } from './TaskItem';
+import { Modal } from './Modal';
 import { useTaskStore } from '../hooks/useTaskStore';
+import { useUserInterfaceStore } from '../hooks/useUserInterfaceStore';
 import addIcon from '../assets/add.svg'
 
 export const ColumnContainer = ({column, tasks}) => {
 
-    const {activeTask, startAddingTask } = useTaskStore()
+    const { setActiveColumn, activeColumn } = useTaskStore()
+    const {isModalOpen , openModal} = useUserInterfaceStore();
 
     const createTask = (columnId) => {
-
-        const newTask = {
-            id: generateId(),
-            columnId,
-            name: 'Task ',
-            description: 'Description',
-        };
-
-        startAddingTask(newTask)
+        setActiveColumn(columnId)
+        openModal();
     }
-
-    const generateId = () => {
-        return Math.floor(Math.random() * 10001);
-    }
-    
   
+    //This is the hook for set sortable column
     const {
         setNodeRef,
-      } = useSortable({id: column.id});
+    } = useSortable({id: column.id});
 
     return (
         <>
             <div className='container' id="column-container">
-
                 <div className="column-title">
                     {column.title}
                 </div>
-
                 <div 
                     className="column-body"
                     ref={setNodeRef}
@@ -50,7 +39,6 @@ export const ColumnContainer = ({column, tasks}) => {
                     }
                 </SortableContext>            
                 </div>       
-
                 <div className='column-footer'>
                     <button 
                         className='btn-add-task'
@@ -63,13 +51,11 @@ export const ColumnContainer = ({column, tasks}) => {
                     </button>
                 </div>
             </div>
-
-            {/* {( isModalOpen)&& (
+            {( isModalOpen && activeColumn === column.id)&& (
           
-                <Modal task={{id: '', name: '', description: '', columnId: column.id}}/>
+                <Modal task={{name: '', description: '', columnId: column.id}}/>
           
-            )} */}
-        </>
-        
+            )}
+        </>        
     )
 }

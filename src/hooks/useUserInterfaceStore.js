@@ -1,11 +1,10 @@
 import { useDispatch, useSelector } from "react-redux"
-import { onCloseModal, onOpenModal } from "../store/userInterface/userInterfaceSlice"
+import { onCloseModal, onOpenModal, onSetDragAnimation } from "../store/userInterface/userInterfaceSlice"
 
 export const useUserInterfaceStore = () => {
 
     const dispatch = useDispatch()
-
-    const {isModalOpen} = useSelector(state => state.userInterface)
+    const {isModalOpen, dragAnimation} = useSelector(state => state.userInterface)
 
     const openModal = () => {
         dispatch(onOpenModal())
@@ -17,21 +16,24 @@ export const useUserInterfaceStore = () => {
     }
 
     const toggleModal = () => {
-    
         (isModalOpen)
             ? openModal()
             : closeModal()
-    
+    }
+
+    const setDragAnimation = (dragAnimation) => {
+        dispatch(onSetDragAnimation(dragAnimation));
     }
 
     return {
         //Propiedades
         isModalOpen,
-
+        dragAnimation,
         //Métodos
         openModal,
         closeModal,
-        toggleModal
+        toggleModal,
+        setDragAnimation
     }
 
 }

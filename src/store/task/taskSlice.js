@@ -1,40 +1,41 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-        const newTask = [{
-            id: 101010,
-            columnId: 'column-1',
-            name: 'Task 1 ',
-            description: 'Description',
-        },
-        {
-            id: 101011,
-            columnId: 'column-2',
-            name: 'Task 2',
-            description: 'Description',
-        },
-        {
-            id: 101012,
-            columnId: 'column-1',
-            name: 'Task 3',
-            description: 'Description',
-        },
-        ];
+// This is the initial state of the tasks in local environment
+        // const newTask = [{
+        //     id: 101010,
+        //     columnId: 'column-1',
+        //     name: 'Task 1 ',
+        //     description: 'Description',
+        // },
+        // {
+        //     id: 101011,
+        //     columnId: 'column-2',
+        //     name: 'Task 2',
+        //     description: 'Description',
+        // },
+        // {
+        //     id: 101012,
+        //     columnId: 'column-1',
+        //     name: 'Task 3',
+        //     description: 'Description',
+        // },
+        // ];
 
 export const taskSlice = createSlice({
     name: 'task',
     initialState: {
-        tasks: newTask,
+        tasks: [],
         activeTask: null,
-        dragAnimation: true,
+        activeColumn: null,
     },
     reducers: {
         onSetActiveTask: (state, {payload}) => {
             state.activeTask = payload;
         },
-        onSetDragAnimation: (state, {payload}) => {
-            state.dragAnimation = payload;
+        onSetActiveColumn: (state, {payload}) => {
+            state.activeColumn = payload;
         },
-        onSetTask: (state, {payload}) => {
+        onSetTasks: (state, {payload = []}) => {
             state.tasks = payload;
         },
         onAddNewTask: (state, {payload}) => {
@@ -59,4 +60,11 @@ export const taskSlice = createSlice({
 
 
 // Action creators are generated for each case reducer function
-export const { onSetActiveTask, onAddNewTask, onSetTask, onDeleteTask, onUpdateEvent , onSetDragAnimation } = taskSlice.actions;
+export const { 
+    onSetActiveTask, 
+    onSetActiveColumn,
+    onAddNewTask, 
+    onSetTasks, 
+    onDeleteTask, 
+    onUpdateEvent
+} = taskSlice.actions;

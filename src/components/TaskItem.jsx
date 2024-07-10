@@ -1,23 +1,22 @@
 import React, { useState } from 'react'
-import TrashIcon from '../icons/trashIcon'
-import EditIcon from '../icons/editIcon'
-import { LayoutGroup, motion } from 'framer-motion';
 import { useSortable } from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
-import { useTaskStore } from '../hooks/useTaskStore';
-import { useForm } from '../hooks/useForm';
+import { LayoutGroup, motion } from 'framer-motion';
 import { Modal } from './Modal';
+import { useTaskStore } from '../hooks/useTaskStore';
 import { useUserInterfaceStore } from '../hooks/useUserInterfaceStore';
+import EditIcon from '../icons/editIcon'
+import TrashIcon from '../icons/trashIcon'
 
 export const TaskItem = ({task}) => {
 
+    // This help us to know if the mouse is over the task for show the buttons
     const [mouseIsOver, setMouseIsOver] = useState(false);
     const motionId = `task-${task.id}`;
 
-        
-    const { activeTask, setActiveTask, startDeletingTask, startUpdatingTask, dragAnimation, setDragAnimation } = useTaskStore();
-    const {isModalOpen , openModal} = useUserInterfaceStore();
-    console.log(dragAnimation)
+    const { activeTask, setActiveTask, startDeletingTask } = useTaskStore();
+    const {isModalOpen, dragAnimation, openModal, setDragAnimation} = useUserInterfaceStore();
+
     const deleteTask = (id) => {
       startDeletingTask(id);
     };
@@ -31,12 +30,11 @@ export const TaskItem = ({task}) => {
     const handleMouseEnter = () => {
         setMouseIsOver(true);
     }
-
     const handleMouseLeave = () => {
         setMouseIsOver(false);
     }
 
-    //Dnd Drag and Drop
+    //Drag and Drop items
     const {
       setNodeRef,
       attributes,
@@ -46,15 +44,13 @@ export const TaskItem = ({task}) => {
       isDragging
     } = useSortable({id: task.id});
   
+    // This is the style for the drag and drop
     const style = {
       transform: CSS.Transform.toString(transform),
       transition,
-      // zIndex: isDragging ? 0 : 'auto',
-      // border: isDragging ? '2px solid blue' : 'none',
-      // backgroundColor: isDragging ? 'white' : 'initial',
-      // color: isDragging ? 'white' : 'initial',
     };
   
+    //This is a item silhouette when is dragging
     if (isDragging) {
       return (
         <article
@@ -74,7 +70,6 @@ export const TaskItem = ({task}) => {
     <>
 
       <LayoutGroup>
-        
         <motion.article 
             className="item-container"
             ref={setNodeRef} 
@@ -87,9 +82,6 @@ export const TaskItem = ({task}) => {
             //layout
             //layoutId={`task-${task.id}`}
             {...(dragAnimation && { layoutId: motionId })}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0}}
-            transition={{ type: "spring"}}
         > 
             <div className="item-container-name">
                 <h5>{task.name}</h5>
@@ -109,9 +101,7 @@ export const TaskItem = ({task}) => {
 
         </motion.article>
         {(activeTask === task.id && isModalOpen)&& (
-          
           <Modal task={task}/>
-          
       )}
       </LayoutGroup>
     </>

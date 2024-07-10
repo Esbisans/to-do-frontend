@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { 
 DndContext, 
 DragOverlay, 
@@ -6,14 +7,22 @@ useSensor,
 useSensors 
 } from '@dnd-kit/core';
 import { arrayMove} from '@dnd-kit/sortable';
-import { useTaskStore } from '../hooks/useTaskStore';
-import { TaskItem } from './TaskItem';
 import { ColumnContainer } from './ColumnContainer'
+import { TaskItem } from './TaskItem';
+import { useTaskStore } from '../hooks/useTaskStore';
+import { useUserInterfaceStore } from '../hooks/useUserInterfaceStore';
 
 export const Board = () => {
 
-  const { tasks, activeTask, setActiveTask, startSettingTasks, setDragAnimation } = useTaskStore();
-
+  const { 
+          tasks, 
+          activeTask, 
+          setActiveTask, 
+          setTasks, 
+          startLoadingTasks, 
+          startSettingTasks 
+        } = useTaskStore();
+  const { setDragAnimation } = useUserInterfaceStore();
 
   const columns = [
     {
@@ -30,8 +39,11 @@ export const Board = () => {
     },
   ]
 
+  useEffect(() => {
+    startLoadingTasks();
+  }, []);
 
-
+  //This is the hook that set the sensor when drag it moves
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -49,13 +61,13 @@ export const Board = () => {
 
     setActiveTask(null);
     setDragAnimation(false);
-    console.log('tasks', tasks);
     const { active, over } = event;
     if (!over) return;
-    if(active.id === over.id) return 
-
+    //if(active.id === over.id) return 
+    startSettingTasks(tasks);
   }
 
+  //This function allows changes position of the tasks 
   const onDragOver = (event) => {
     setDragAnimation(true);
 
@@ -63,41 +75,49 @@ export const Board = () => {
     if (!over) return;
     if (active.id === over.id) return;
 
+    //This is the condition if the task is over the column or over another task
     const overColumn = over.data.current.sortable?.containerId === 'Sortable';
 
+    //This is the condition if the task is over the column
     if (overColumn) {
 
+      //This is the index of the active task
       const activeTaskIndex = tasks.findIndex(task => task.id === active.id);
+      
+      //This is the new tasks array with the new columnId
       let newTasks = [...tasks];
-
       newTasks[activeTaskIndex] = {
         ...newTasks[activeTaskIndex],
         columnId: over.id,
       };
       newTasks = arrayMove(newTasks, activeTaskIndex, activeTaskIndex);
-      startSettingTasks(newTasks);
-
-    } else {
+      setTasks(newTasks);
+    } 
+      //This is the condition if the task is over another task
+      else {
       
+      //This is the index of the active task and the over task
       const activeTaskIndex = tasks.findIndex(task => task.id === active.id);
       const overTaskIndex = tasks.findIndex(task => task.id === over.id);
       
       let newTasks = [...tasks];
-      
+      //This is the condition if the task is over another task in another column
       if (newTasks[activeTaskIndex].columnId !== newTasks[overTaskIndex].columnId) {
 
+        //This is the new tasks array with the new columnId
         newTasks[activeTaskIndex] = {
           ...newTasks[activeTaskIndex],
           columnId: newTasks[overTaskIndex].columnId,
         };
-        
+        //This is the new tasks array with the new position
         newTasks = arrayMove(newTasks, activeTaskIndex, overTaskIndex - 1);
-        startSettingTasks(newTasks);
+        setTasks(newTasks);
 
-      } else {
-        // cambiar orden
+      } 
+        //This is the condition if the task is over another task in the same column
+        else {
         newTasks = arrayMove(newTasks, activeTaskIndex, overTaskIndex);
-        startSettingTasks(newTasks);
+        setTasks(newTasks);
       }
     } 
 

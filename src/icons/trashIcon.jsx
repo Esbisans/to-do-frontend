@@ -4,10 +4,6 @@ import trashJson from "./trash.json";
 const style = {
 
   height: 25,
-  // border: 3,
-  // borderStyle: "solid",
-  // borderRadius: 7,
-
 };
 
 const trashIcon = () => {

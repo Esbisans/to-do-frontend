@@ -2,10 +2,10 @@
 
 export const getEnv = () => {
 
-    import.meta.env
+    const env=import.meta.env;
 
     return {
-        ...import.meta.env
+        ...env
     }
 
 }

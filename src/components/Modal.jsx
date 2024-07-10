@@ -1,19 +1,25 @@
+import { useState } from "react";
+import { motion } from 'framer-motion';
 import { useForm } from "../hooks/useForm";
 import { useTaskStore } from "../hooks/useTaskStore";
 import { useUserInterfaceStore } from "../hooks/useUserInterfaceStore";
-import { motion } from 'framer-motion';
 import closeIcon from '../assets/close.svg'
 
 export const Modal = ({task}) => {
 
-    const {closeModal} = useUserInterfaceStore();
-    const { startUpdatingTask, setActiveTask, dragAnimation } = useTaskStore();
+    const {closeModal, dragAnimation} = useUserInterfaceStore();
+    const { 
+        startUpdatingTask, 
+        setActiveTask, 
+        startAddingTask, 
+        setActiveColumn 
+    } = useTaskStore();
+    const [error, setError] = useState(false);
     const motionId = `task-${task.id}`;
     
 
     const {name, description, formState ,onInputChange} = useForm(
         {
-          id: task.id,
           name: task.name,
           description: task.description,
           columnId: task.columnId,
@@ -22,21 +28,37 @@ export const Modal = ({task}) => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-        startUpdatingTask(formState);
+
+        // Validate the name
+        if (name.trim().length === 0) {
+            setError(true);
+            return;
+        }
+        
+        // this is for update the task
+        if (task.id) {
+            startUpdatingTask({...formState, id: task.id});
+        } 
+            // this is for add a new task
+            else {
+            startAddingTask(formState);
+        }
+        
         handleCloseClick();
     }
 
     const handleCloseClick = () => {
         closeModal();
         setActiveTask(null);
-      };
+        setActiveColumn(null);
+    };
 
+    // This is for close the modal when click outside
     const handleBackdropClick = (e) => {
         if (e.target.classList.contains('modal-backdrop')) {
           handleCloseClick();
         }
     };
-    
 
     return (
         <motion.div className="modal-backdrop" onClick={handleBackdropClick}>
@@ -62,8 +84,10 @@ export const Modal = ({task}) => {
                                 name="name"
                                 value={name}
                                 onChange={onInputChange}
+                                autoFocus
                             />
                         </div>
+                        {error && <p style={{ color: 'red' }}>This field is required.</p>}
                         <h3 className='modal-label'>Description</h3>
                         <div className='modal-body'>
                             <input 
