@@ -13,3 +13,5 @@ This is a To-Do List application built using the MERN (MongoDB, Express, React, 
 ### Demo
 
 https://to-do-frontend-wine.vercel.app/
+
+![Basic example of to-do App](./docs/to-do-app.gif)
