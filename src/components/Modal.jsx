@@ -5,7 +5,7 @@ import { useTaskStore } from "../hooks/useTaskStore";
 import { useUserInterfaceStore } from "../hooks/useUserInterfaceStore";
 import closeIcon from '../assets/close.svg'
 
-export const Modal = ({task}) => {
+export const Modal = ({task, action}) => {
 
     const {closeModal, dragAnimation} = useUserInterfaceStore();
     const { 
@@ -66,11 +66,11 @@ export const Modal = ({task}) => {
                 className='modal-content'
                 //layout
                 //layoutId={`task-${task.id}`}
-                {...(dragAnimation && { layoutId: motionId })}
+                //{...(dragAnimation && { layoutId: motionId })}
             >
                 <form onSubmit={onSubmit}>
                     <header>
-                        <h2>Update task</h2>
+                        <h2>{action} task</h2>
                         <button className="close-btn" type="button" onClick={handleCloseClick}>
                             <img src={closeIcon} alt="close icon" style={{ width: '2em', height: '2em' }} />
                         </button>

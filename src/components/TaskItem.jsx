@@ -81,7 +81,7 @@ export const TaskItem = ({task}) => {
             whileHover={{ scale:1.1 }}
             //layout
             //layoutId={`task-${task.id}`}
-            {...(dragAnimation && { layoutId: motionId })}
+            //{...(dragAnimation && { layoutId: motionId })}
         > 
             <div className="item-container-name">
                 <h5>{task.name}</h5>
@@ -101,7 +101,7 @@ export const TaskItem = ({task}) => {
 
         </motion.article>
         {(activeTask === task.id && isModalOpen)&& (
-          <Modal task={task}/>
+          <Modal task={task} action={'Update'}/>
       )}
       </LayoutGroup>
     </>

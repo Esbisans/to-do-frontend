@@ -53,7 +53,7 @@ export const ColumnContainer = ({column, tasks}) => {
             </div>
             {( isModalOpen && activeColumn === column.id)&& (
           
-                <Modal task={{name: '', description: '', columnId: column.id}}/>
+                <Modal task={{name: '', description: '', columnId: column.id}} action={'Add'}/>
           
             )}
         </>        
